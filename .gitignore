@@ -1,0 +1,24 @@
+# Operating System Files
+.DS_Store
+Thumbs.db
+*.swp
+
+# Editor Configuration
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Dependency Directories (if added later)
+node_modules/
+jspm_packages/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build Output (if added later)
+dist/
+build/
+
