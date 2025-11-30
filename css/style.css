@@ -1,159 +1,352 @@
+:root {
+  --bg-color: #0f0f12;
+  --card-bg: #1a1a1f;
+  --card-border: #2a2a35;
+  --text-primary: #f0f0f0;
+  --text-secondary: #a0a0b0;
+  --accent-color: #3b82f6; /* Modern blue */
+  --accent-hover: #2563eb;
+  --success-color: #10b981;
+  --gold-color: #ffd700;
+  --danger-color: #ef4444;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.15);
+}
+
 body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
-  margin: 20px;
-  background: #111;
-  color: #eee;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  margin: 0;
+  padding: 40px 20px;
+  background: var(--bg-color);
+  color: var(--text-primary);
+  line-height: 1.6;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
 }
-h1,
-h2 {
-  margin-bottom: 0.3rem;
+
+h1, h2, h3, h4 {
+  margin-top: 0;
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
 small {
-  color: #aaa;
+  color: var(--text-secondary);
+  display: block;
+  margin-bottom: 2rem;
 }
-.controls {
-  margin: 1rem 0;
+
+/* Layout Containers */
+.container {
   display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-  align-items: center;
-  padding: 1rem;
-  background: #1a1a1a;
-  border: 1px solid #333;
-  border-radius: 6px;
-}
-button {
-  cursor: pointer;
-  border-radius: 4px;
-  border: 1px solid #444;
-  padding: 0.5rem 1rem;
-  background: #222;
-  color: #eee;
-  font-weight: 500;
-  transition: background 0.2s;
-}
-button:hover {
-  background: #333;
-}
-button.primary {
-  background: #0056b3;
-  border-color: #004494;
-}
-button.primary:hover {
-  background: #004494;
-}
-select {
-  background: #111;
-  color: #eee;
-  border: 1px solid #444;
-  border-radius: 4px;
-  padding: 0.25rem 0.5rem;
-}
-table {
-  border-collapse: collapse;
-  width: 100%;
-  margin-top: 1rem;
-  font-size: 0.9rem;
-}
-th,
-td {
-  border: 1px solid #333;
-  padding: 0.4rem 0.6rem;
-  text-align: center;
-}
-th {
-  background: #222;
-}
-tbody tr:nth-child(even) {
-  background: #181818;
-}
-tbody tr:nth-child(odd) {
-  background: #141414;
-}
-/* Title Contenders Highlight */
-tbody tr.contender {
-  background: #1a1a2e; /* Subtle blue tint */
-}
-tbody tr.contender td {
-  border-top: 1px solid #444;
-  border-bottom: 1px solid #444;
+  flex-direction: column;
+  gap: 2rem;
 }
 
-.champion-row {
-  outline: 2px solid gold;
-  position: relative;
-  z-index: 1;
-}
-.champion-badge {
-  padding: 0.1rem 0.4rem;
-  border-radius: 999px;
-  border: 1px solid #ffd700;
-  background: rgba(255, 215, 0, 0.1);
-  color: #ffd700;
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-weight: bold;
-}
-.tie-badge {
-  border-color: #aaa;
-  background: rgba(170, 170, 170, 0.1);
-  color: #aaa;
-}
-.note {
-  margin-top: 1.5rem;
-  color: #bbb;
-  font-size: 0.8rem;
-  padding: 1rem;
-  background: #161616;
-  border-radius: 6px;
-}
-
-/* Strategy Room Styles */
+/* Strategy Room */
 #strategy-room {
-  margin: 1.5rem 0;
-  padding: 1rem;
-  background: #181818;
-  border: 1px solid #333;
-  border-radius: 8px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  margin-bottom: 2rem;
 }
+
 .strategy-header {
   display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-.strategy-results {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1rem;
-  margin-top: 1rem;
-  max-height: 400px;
-  overflow-y: auto;
-}
-.scenario-card {
-  background: #222;
-  border: 1px solid #444;
-  padding: 1rem;
-  border-radius: 6px;
-}
-.scenario-card h4 {
-  margin: 0 0 0.5rem 0;
-  color: #ffd700;
-}
-.scenario-card p {
-  margin: 0;
-  font-size: 0.9rem;
-  color: #ccc;
-  line-height: 1.4;
-}
-.driver-select-btn {
-    margin-right: 0.5rem;
-}
-.driver-select-btn.active {
-    background: #ffd700;
-    color: #000;
-    border-color: #ffd700;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--card-border);
+  padding-bottom: 1.5rem;
 }
 
+.strategy-header h2 {
+  margin-bottom: 0.25rem;
+  font-size: 1.25rem;
+}
+
+.strategy-header small {
+  margin-bottom: 0;
+}
+
+.strategy-controls {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.driver-select-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--card-border);
+  color: var(--text-secondary);
+  padding: 0.6rem 1.2rem;
+  border-radius: 99px; /* Pill shape */
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.driver-select-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.driver-select-btn.active {
+  background: var(--gold-color);
+  color: #000;
+  border-color: var(--gold-color);
+  font-weight: 600;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+}
+
+.strategy-results {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.scenario-card {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--card-border);
+  padding: 1.25rem;
+  border-radius: var(--radius-sm);
+  transition: transform 0.2s;
+}
+
+.scenario-card:hover {
+  border-color: #444;
+  transform: translateY(-2px);
+}
+
+.scenario-card h4 {
+  color: var(--gold-color);
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.scenario-card p {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* Manual Simulation Controls */
+.controls {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  box-shadow: var(--shadow);
+  margin-bottom: 1.5rem;
+}
+
+.controls-text {
+  flex: 1;
+  min-width: 200px;
+}
+
+.controls-text strong {
+  display: block;
+  font-size: 1.1rem;
+  margin-bottom: 0.25rem;
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+}
+
+button {
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: all 0.2s;
+  background: #333;
+  color: #fff;
+}
+
+button:hover {
+  background: #444;
+}
+
+button.primary {
+  background: var(--accent-color);
+  color: white;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+button.primary:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+/* Table Styling */
+table {
+  width: 100%;
+  border-collapse: separate; /* Allows border-radius on rows/cells */
+  border-spacing: 0;
+  margin-top: 1rem;
+  background: var(--card-bg);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+th, td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--card-border);
+}
+
+th {
+  background: rgba(255, 255, 255, 0.03);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+}
+
+td {
+  font-size: 0.95rem;
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+tbody tr {
+  transition: background 0.15s;
+}
+
+tbody tr:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* Champion Highlight */
+.champion-row {
+  background: rgba(255, 215, 0, 0.05) !important;
+  position: relative;
+}
+
+.champion-row td:first-child {
+  box-shadow: inset 4px 0 0 var(--gold-color);
+}
+
+select {
+  appearance: none;
+  background: #000;
+  border: 1px solid var(--card-border);
+  color: #fff;
+  padding: 0.5rem 2rem 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23888' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+}
+
+select:focus {
+  outline: none;
+  border-color: var(--accent-color);
+}
+
+/* Summary Badge */
+.champion-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 99px;
+  background: var(--gold-color);
+  color: #000;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  margin-right: 0.5rem;
+}
+
+.tie-badge {
+  background: #555;
+  color: #fff;
+}
+
+#champion-summary {
+  background: linear-gradient(to right, rgba(59, 130, 246, 0.1), transparent);
+  border-left: 4px solid var(--accent-color);
+  padding: 1rem 1.5rem;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+}
+
+#champion-summary p {
+  margin: 0;
+}
+
+/* Note Section */
+.note {
+  margin-top: 3rem;
+  padding: 1.5rem;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.note strong {
+  color: #fff;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.note ul {
+  padding-left: 1.5rem;
+  margin: 0;
+}
+
+.note li {
+  margin-bottom: 0.25rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  body {
+    padding: 20px 10px;
+  }
+  
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .actions {
+    flex-direction: column;
+  }
+  
+  table {
+    display: block;
+    overflow-x: auto;
+  }
+}
