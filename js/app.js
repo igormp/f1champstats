@@ -41,11 +41,14 @@ function setupEventListeners() {
 function buildTable() {
   tbody.innerHTML = "";
   BASE_DRIVERS.forEach((driver, idx) => {
+    // Only show title contenders
+    if (!driver.isContender) return;
+
     const tr = document.createElement("tr");
     tr.dataset.driverIndex = idx.toString();
-    if (driver.isContender) {
-      tr.classList.add("contender");
-    }
+    // Contender class is now redundant visually since all are contenders,
+    // but kept for any specific styling needs
+    tr.classList.add("contender");
 
     const tds = [
       { text: "-", class: "rank" },
@@ -91,7 +94,7 @@ function createPositionSelect(driverIdx, currentPoints) {
   optNone.textContent = "No points / DNF";
   select.appendChild(optNone);
 
-  for (let pos = 1; pos <= BASE_DRIVERS.length; pos++) {
+  for (let pos = 1; pos <= 10; pos++) {
     const opt = document.createElement("option");
     opt.value = pos.toString();
     opt.textContent = "P" + pos;
@@ -100,13 +103,47 @@ function createPositionSelect(driverIdx, currentPoints) {
   return select;
 }
 
-// Ensure no two drivers have the same P1-P21 position (basic validation UI)
-// This is an enhancement: Auto-clear conflicting positions?
-// For now, let's keep it simple as per original, but maybe warn?
-// The prompt asked for specific scenario logic, not necessarily complex table validation.
-// We'll stick to basic table behavior.
+// Ensure no two drivers have the same position
 function handlePositionChange(e) {
-  // Optional: could add live updates here
+  const changedSelect = e.target;
+  const newValue = changedSelect.value;
+
+  // If "No Points" selected, no conflict logic needed
+  if (newValue === "") return;
+
+  const allSelects = Array.from(
+    document.querySelectorAll("#drivers-body select")
+  );
+
+  // Find another select that already holds this position
+  const conflictingSelect = allSelects.find(
+    (s) => s !== changedSelect && s.value === newValue
+  );
+
+  if (conflictingSelect) {
+    // Determine used values excluding the conflicting one (since it's moving)
+    // We include the 'newValue' because the changedSelect now occupies it
+    const usedValues = new Set();
+    allSelects.forEach((s) => {
+      if (s !== conflictingSelect && s.value !== "") {
+        usedValues.add(parseInt(s.value, 10));
+      }
+    });
+
+    // Find the topmost (lowest number) available position P1..P10
+    let bestP = 1;
+    while (usedValues.has(bestP)) {
+      bestP++;
+    }
+
+    // Assign if within range (for 3 drivers, this will always be <= 3 usually)
+    if (bestP <= 10) {
+      conflictingSelect.value = bestP.toString();
+    } else {
+      // Fallback if somehow 1..10 are full (impossible with 3 drivers but safe to handle)
+      conflictingSelect.value = "";
+    }
+  }
 }
 
 function runSimulation() {
