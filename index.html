@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>F1 2025 Final Race Championship Simulator</title>
+    <style>
+      body {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        margin: 20px;
+        background: #111;
+        color: #eee;
+      }
+      h1,
+      h2 {
+        margin-bottom: 0.3rem;
+      }
+      small {
+        color: #aaa;
+      }
+      .controls {
+        margin: 1rem 0;
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      button {
+        cursor: pointer;
+        border-radius: 4px;
+        border: 1px solid #444;
+        padding: 0.4rem 0.7rem;
+        background: #222;
+        color: #eee;
+      }
+      button:hover {
+        background: #333;
+      }
+      select {
+        background: #111;
+        color: #eee;
+        border: 1px solid #444;
+        border-radius: 4px;
+        padding: 0.15rem 0.3rem;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin-top: 1rem;
+        font-size: 0.9rem;
+      }
+      th,
+      td {
+        border: 1px solid #333;
+        padding: 0.3rem 0.4rem;
+        text-align: center;
+      }
+      th {
+        background: #222;
+      }
+      tbody tr:nth-child(even) {
+        background: #181818;
+      }
+      tbody tr:nth-child(odd) {
+        background: #141414;
+      }
+      .champion-row {
+        outline: 2px solid gold;
+      }
+      .champion-badge {
+        padding: 0.1rem 0.4rem;
+        border-radius: 999px;
+        border: 1px solid #444;
+        background: #222;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .note {
+        margin-top: 0.5rem;
+        color: #bbb;
+        font-size: 0.8rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>F1 2025 Final Race Championship Simulator</h1>
+    <small>Static HTML – no backend, all logic in JavaScript.</small>
+
+    <div class="controls">
+      <div>
+        <strong>Last race result:</strong>
+        <span
+          >Choose finishing position for each driver (1–21 or “No
+          points”).</span
+        >
+      </div>
+      <button id="simulate-btn">Simulate Championship</button>
+      <button id="reset-btn">Reset positions</button>
+    </div>
+
+    <div id="champion-summary"></div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Final Rank</th>
+          <th>Driver</th>
+          <th>Team</th>
+          <th>Current Pts</th>
+          <th>Wins</th>
+          <th>Podiums</th>
+          <th>Last Race Pos</th>
+          <th>Points from Last Race</th>
+          <th>Final Pts</th>
+          <th>Final Wins</th>
+          <th>Final Podiums</th>
+        </tr>
+      </thead>
+      <tbody id="drivers-body">
+        <!-- rows populated by JS -->
+      </tbody>
+    </table>
+
+    <div class="note">
+      Assumptions:
+      <ul>
+        <li>
+          Full race points only: 25-18-15-12-10-8-6-4-2-1 for P1-P10; P11+
+          scores 0.
+        </li>
+        <li>No sprint, fastest lap or shortened-race modifiers.</li>
+        <li>
+          Tie-break: most points, then most wins, then most podiums; if still
+          equal, treated as “tie”.
+        </li>
+      </ul>
+    </div>
+
+    <script>
+      // Points for a full Grand Prix (P1..P10). Index = finishing position.
+      const RACE_POINTS = [0, 25, 18, 15, 12, 10, 8, 6, 4, 2, 1];
+
+      // Base driver data from the standings you provided.
+      // Only the top three are mathematically in contention for the title
+      // (max 25 pts available), but we keep everyone in the table.
+      const BASE_DRIVERS = [
+        {
+          name: "L. Norris",
+          team: "McLaren",
+          country: "United Kingdom",
+          points: 408,
+          wins: 7,
+          podiums: 17,
+        },
+        {
+          name: "M. Verstappen",
+          team: "Red Bull",
+          country: "Netherlands",
+          points: 396,
+          wins: 7,
+          podiums: 14,
+        },
+        {
+          name: "O. Piastri",
+          team: "McLaren",
+          country: "Australia",
+          points: 392,
+          wins: 7,
+          podiums: 15,
+        },
+        {
+          name: "G. Russell",
+          team: "Mercedes",
+          country: "United Kingdom",
+          points: 309,
+          wins: 2,
+          podiums: 9,
+        },
+        {
+          name: "C. Leclerc",
+          team: "Ferrari",
+          country: "Monaco",
+          points: 230,
+          wins: 0,
+          podiums: 7,
+        },
+        {
+          name: "L. Hamilton",
+          team: "Ferrari",
+          country: "United Kingdom",
+          points: 152,
+          wins: 0,
+          podiums: 0,
+        },
+        {
+          name: "A.K. Antonelli",
+          team: "Mercedes",
+          country: "Italy",
+          points: 150,
+          wins: 0,
+          podiums: 3,
+        },
+        {
+          name: "A. Albon",
+          team: "Williams",
+          country: "Thailand",
+          points: 73,
+          wins: 0,
+          podiums: 0,
+        },
+        {
+          name: "C. Sainz Jr.",
+          team: "Williams",
+          country: "Spain",
+          points: 64,
+          wins: 0,
+          podiums: 2,
+        },
+        {
+          name: "I. Hadjar",
+          team: "RB",
+          country: "France",
+          points: 51,
+          wins: 0,
+          podiums: 1,
+        },
+        {
+          name: "N. Hülkenberg",
+          team: "Kick Sauber",
+          country: "Germany",
+          points: 49,
+          wins: 0,
+          podiums: 1,
+        },
+        {
+          name: "F. Alonso",
+          team: "Aston Martin",
+          country: "Spain",
+          points: 48,
+          wins: 0,
+          podiums: 0,
+        },
+        {
+          name: "O. Bearman",
+          team: "Haas",
+          country: "United Kingdom",
+          points: 41,
+          wins: 0,
+          podiums: 0,
+        },
+        {
+          name: "L. Lawson",
+          team: "RB",
+          country: "New Zealand",
+          points: 38,
+          wins: 0,
+          podiums: 0,
+        },
+        {
+          name: "Y. Tsunoda",
+          team: "Red Bull",
+          country: "Japan",
+          points: 33,
+          wins: 0,
+          podiums: 0,
+        },
+        {
+          name: "E. Ocon",
+          team: "Haas",
+          country: "France",
+          points: 32,
+          wins: 0,
+          podiums: 0,
+        },
+        {
+          name: "L. Stroll",
+          team: "Aston Martin",
+          country: "Canada",
+          points: 32,
+          wins: 0,
+          podiums: 0,
+        },
+        {
+          name: "P. Gasly",
+          team: "Alpine",
+          country: "France",
+          points: 22,
+          wins: 0,
+          podiums: 0,
+        },
+        {
+          name: "G. Bortoleto",
+          team: "Kick Sauber",
+          country: "Brazil",
+          points: 19,
+          wins: 0,
+          podiums: 0,
+        },
+        {
+          name: "F. Colapinto",
+          team: "Alpine",
+          country: "Argentina",
+          points: 0,
+          wins: 0,
+          podiums: 0,
+        },
+        {
+          name: "J. Doohan",
+          team: "Alpine",
+          country: "Australia",
+          points: 0,
+          wins: 0,
+          podiums: 0,
+        },
+      ];
+
+      const tbody = document.getElementById("drivers-body");
+      const championSummary = document.getElementById("champion-summary");
+      const simulateBtn = document.getElementById("simulate-btn");
+      const resetBtn = document.getElementById("reset-btn");
+
+      // Build initial table with select boxes for finishing position.
+      function buildInitialTable() {
+        tbody.innerHTML = "";
+        BASE_DRIVERS.forEach((driver, idx) => {
+          const tr = document.createElement("tr");
+          tr.dataset.driverIndex = idx.toString();
+
+          const finalRankTd = document.createElement("td");
+          finalRankTd.textContent = "-";
+
+          const driverTd = document.createElement("td");
+          driverTd.textContent = driver.name;
+
+          const teamTd = document.createElement("td");
+          teamTd.textContent = driver.team;
+
+          const basePtsTd = document.createElement("td");
+          basePtsTd.textContent = driver.points;
+
+          const winsTd = document.createElement("td");
+          winsTd.textContent = driver.wins;
+
+          const podTd = document.createElement("td");
+          podTd.textContent = driver.podiums;
+
+          const selectTd = document.createElement("td");
+          const select = document.createElement("select");
+          select.name = "finish-pos-" + idx;
+          // Option: no points (default)
+          const optNone = document.createElement("option");
+          optNone.value = "";
+          optNone.textContent = "No points / DNF";
+          select.appendChild(optNone);
+          // Positions 1..21
+          for (let pos = 1; pos <= BASE_DRIVERS.length; pos++) {
+            const opt = document.createElement("option");
+            opt.value = pos.toString();
+            opt.textContent = "P" + pos;
+            select.appendChild(opt);
+          }
+          selectTd.appendChild(select);
+
+          const racePtsTd = document.createElement("td");
+          racePtsTd.textContent = "0";
+
+          const finalPtsTd = document.createElement("td");
+          finalPtsTd.textContent = driver.points;
+
+          const finalWinsTd = document.createElement("td");
+          finalWinsTd.textContent = driver.wins;
+
+          const finalPodTd = document.createElement("td");
+          finalPodTd.textContent = driver.podiums;
+
+          tr.appendChild(finalRankTd);
+          tr.appendChild(driverTd);
+          tr.appendChild(teamTd);
+          tr.appendChild(basePtsTd);
+          tr.appendChild(winsTd);
+          tr.appendChild(podTd);
+          tr.appendChild(selectTd);
+          tr.appendChild(racePtsTd);
+          tr.appendChild(finalPtsTd);
+          tr.appendChild(finalWinsTd);
+          tr.appendChild(finalPodTd);
+
+          tbody.appendChild(tr);
+        });
+
+        championSummary.innerHTML = "";
+      }
+
+      // Compute final standings based on selected positions.
+      function simulate() {
+        const rows = Array.from(tbody.querySelectorAll("tr"));
+        const results = [];
+
+        rows.forEach((tr) => {
+          const idx = parseInt(tr.dataset.driverIndex, 10);
+          const base = BASE_DRIVERS[idx];
+
+          const select = tr.querySelector("select");
+          const posValue = select.value;
+          const finishingPos = posValue === "" ? null : parseInt(posValue, 10);
+
+          const basePoints = base.points;
+          const baseWins = base.wins;
+          const basePodiums = base.podiums;
+
+          const racePoints =
+            finishingPos != null && finishingPos <= 10
+              ? RACE_POINTS[finishingPos]
+              : 0;
+
+          const finalPoints = basePoints + racePoints;
+          const finalWins = baseWins + (finishingPos === 1 ? 1 : 0);
+          const finalPodiums =
+            basePodiums + (finishingPos != null && finishingPos <= 3 ? 1 : 0);
+
+          results.push({
+            idx,
+            name: base.name,
+            team: base.team,
+            finishingPos,
+            racePoints,
+            finalPoints,
+            finalWins,
+            finalPodiums,
+            basePoints,
+            baseWins,
+            basePodiums,
+          });
+        });
+
+        // Sort by final points, wins, podiums
+        results.sort((a, b) => {
+          if (b.finalPoints !== a.finalPoints) {
+            return b.finalPoints - a.finalPoints;
+          }
+          if (b.finalWins !== a.finalWins) {
+            return b.finalWins - a.finalWins;
+          }
+          if (b.finalPodiums !== a.finalPodiums) {
+            return b.finalPodiums - a.finalPodiums;
+          }
+          // Stable-ish fallback: name
+          return a.name.localeCompare(b.name);
+        });
+
+        // Determine champion, detect simple tie
+        const champion = results[0];
+        const second = results[1];
+        let summaryHtml = "";
+
+        const isTie =
+          second &&
+          champion.finalPoints === second.finalPoints &&
+          champion.finalWins === second.finalWins &&
+          champion.finalPodiums === second.finalPodiums;
+
+        if (isTie) {
+          summaryHtml =
+            `<p><span class="champion-badge">Tie</span> ` +
+            `Tie on points/wins/podiums between <strong>${champion.name}</strong> and ` +
+            `<strong>${second.name}</strong> (${champion.finalPoints} pts).</p>`;
+        } else {
+          summaryHtml =
+            `<p><span class="champion-badge">Champion</span> ` +
+            `<strong>${champion.name}</strong> (${champion.team}) with ` +
+            `<strong>${champion.finalPoints}</strong> points ` +
+            `(wins: ${champion.finalWins}, podiums: ${champion.finalPodiums}).</p>`;
+        }
+
+        championSummary.innerHTML = summaryHtml;
+
+        // Rebuild table rows in new order with updated values
+        tbody.innerHTML = "";
+        results.forEach((res, rankIndex) => {
+          const base = BASE_DRIVERS[res.idx];
+          const tr = document.createElement("tr");
+          if (rankIndex === 0 && !isTie) {
+            tr.classList.add("champion-row");
+          }
+
+          const rankTd = document.createElement("td");
+          rankTd.textContent = (rankIndex + 1).toString();
+
+          const nameTd = document.createElement("td");
+          nameTd.textContent = base.name;
+
+          const teamTd = document.createElement("td");
+          teamTd.textContent = base.team;
+
+          const basePtsTd = document.createElement("td");
+          basePtsTd.textContent = base.points;
+
+          const baseWinsTd = document.createElement("td");
+          baseWinsTd.textContent = base.wins;
+
+          const basePodsTd = document.createElement("td");
+          basePodsTd.textContent = base.podiums;
+
+          const selectTd = document.createElement("td");
+          const select = document.createElement("select");
+          select.name = "finish-pos-" + res.idx;
+          const optNone = document.createElement("option");
+          optNone.value = "";
+          optNone.textContent = "No points / DNF";
+          select.appendChild(optNone);
+          for (let pos = 1; pos <= BASE_DRIVERS.length; pos++) {
+            const opt = document.createElement("option");
+            opt.value = pos.toString();
+            opt.textContent = "P" + pos;
+            if (res.finishingPos === pos) {
+              opt.selected = true;
+            }
+            select.appendChild(opt);
+          }
+          selectTd.appendChild(select);
+
+          const racePtsTd = document.createElement("td");
+          racePtsTd.textContent = res.racePoints.toString();
+
+          const finalPtsTd = document.createElement("td");
+          finalPtsTd.textContent = res.finalPoints.toString();
+
+          const finalWinsTd = document.createElement("td");
+          finalWinsTd.textContent = res.finalWins.toString();
+
+          const finalPodsTd = document.createElement("td");
+          finalPodsTd.textContent = res.finalPodiums.toString();
+
+          tr.appendChild(rankTd);
+          tr.appendChild(nameTd);
+          tr.appendChild(teamTd);
+          tr.appendChild(basePtsTd);
+          tr.appendChild(baseWinsTd);
+          tr.appendChild(basePodsTd);
+          tr.appendChild(selectTd);
+          tr.appendChild(racePtsTd);
+          tr.appendChild(finalPtsTd);
+          tr.appendChild(finalWinsTd);
+          tr.appendChild(finalPodsTd);
+
+          tbody.appendChild(tr);
+        });
+      }
+
+      function resetPositions() {
+        buildInitialTable();
+      }
+
+      // Init
+      buildInitialTable();
+      simulateBtn.addEventListener("click", simulate);
+      resetBtn.addEventListener("click", resetPositions);
+    </script>
+  </body>
+</html>
