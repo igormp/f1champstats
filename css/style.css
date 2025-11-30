@@ -1,0 +1,159 @@
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  margin: 20px;
+  background: #111;
+  color: #eee;
+}
+h1,
+h2 {
+  margin-bottom: 0.3rem;
+}
+small {
+  color: #aaa;
+}
+.controls {
+  margin: 1rem 0;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 1rem;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 6px;
+}
+button {
+  cursor: pointer;
+  border-radius: 4px;
+  border: 1px solid #444;
+  padding: 0.5rem 1rem;
+  background: #222;
+  color: #eee;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+button:hover {
+  background: #333;
+}
+button.primary {
+  background: #0056b3;
+  border-color: #004494;
+}
+button.primary:hover {
+  background: #004494;
+}
+select {
+  background: #111;
+  color: #eee;
+  border: 1px solid #444;
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+th,
+td {
+  border: 1px solid #333;
+  padding: 0.4rem 0.6rem;
+  text-align: center;
+}
+th {
+  background: #222;
+}
+tbody tr:nth-child(even) {
+  background: #181818;
+}
+tbody tr:nth-child(odd) {
+  background: #141414;
+}
+/* Title Contenders Highlight */
+tbody tr.contender {
+  background: #1a1a2e; /* Subtle blue tint */
+}
+tbody tr.contender td {
+  border-top: 1px solid #444;
+  border-bottom: 1px solid #444;
+}
+
+.champion-row {
+  outline: 2px solid gold;
+  position: relative;
+  z-index: 1;
+}
+.champion-badge {
+  padding: 0.1rem 0.4rem;
+  border-radius: 999px;
+  border: 1px solid #ffd700;
+  background: rgba(255, 215, 0, 0.1);
+  color: #ffd700;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: bold;
+}
+.tie-badge {
+  border-color: #aaa;
+  background: rgba(170, 170, 170, 0.1);
+  color: #aaa;
+}
+.note {
+  margin-top: 1.5rem;
+  color: #bbb;
+  font-size: 0.8rem;
+  padding: 1rem;
+  background: #161616;
+  border-radius: 6px;
+}
+
+/* Strategy Room Styles */
+#strategy-room {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: #181818;
+  border: 1px solid #333;
+  border-radius: 8px;
+}
+.strategy-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+.strategy-results {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+  max-height: 400px;
+  overflow-y: auto;
+}
+.scenario-card {
+  background: #222;
+  border: 1px solid #444;
+  padding: 1rem;
+  border-radius: 6px;
+}
+.scenario-card h4 {
+  margin: 0 0 0.5rem 0;
+  color: #ffd700;
+}
+.scenario-card p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #ccc;
+  line-height: 1.4;
+}
+.driver-select-btn {
+    margin-right: 0.5rem;
+}
+.driver-select-btn.active {
+    background: #ffd700;
+    color: #000;
+    border-color: #ffd700;
+}
+
